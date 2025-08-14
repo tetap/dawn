@@ -143,6 +143,8 @@ interop::ArrayBuffer GPUBuffer::getMappedRange(Napi::Env env,
     auto array_buffer = Napi::ArrayBuffer::New(env, s);
     std::memcpy(array_buffer.Data(), ptr, s);
 
+    mappings_.emplace_back(Mapping{start, end, Napi::Persistent(array_buffer)});
+
     return array_buffer;
 }
 
