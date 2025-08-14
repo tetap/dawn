@@ -132,13 +132,16 @@ interop::ArrayBuffer GPUBuffer::getMappedRange(Napi::Env env,
     // // TODO(crbug.com/dawn/1135): Ownership here is the wrong way around.
     // mappings_.emplace_back(Mapping{start, end, Napi::Persistent(array_buffer)});
 
-    // 1. 将外部内存复制到 V8 内存笼内的 Buffer
-    Napi::Buffer<uint8_t> v8_buffer = Napi::Buffer<uint8_t>::Copy(env, static_cast<uint8_t*>(ptr), s);
-    // 2. 获取 Buffer 底层的 ArrayBuffer
-    Napi::ArrayBuffer array_buffer = v8_buffer.ArrayBuffer();
+    // // 1. 将外部内存复制到 V8 内存笼内的 Buffer
+    // Napi::Buffer<uint8_t> v8_buffer = Napi::Buffer<uint8_t>::Copy(env, static_cast<uint8_t*>(ptr), s);
+    // // 2. 获取 Buffer 底层的 ArrayBuffer
+    // Napi::ArrayBuffer array_buffer = v8_buffer.ArrayBuffer();
 
-    // 3. 存储 ArrayBuffer 的持久引用（匹配 mappings_ 的类型）
-    mappings_.emplace_back(Mapping{start, end, Napi::Persistent(array_buffer)});
+    // // 3. 存储 ArrayBuffer 的持久引用（匹配 mappings_ 的类型）
+    // mappings_.emplace_back(Mapping{start, end, Napi::Persistent(array_buffer)});
+
+    auto array_buffer = Napi::ArrayBuffer::New(env, s);
+    std::memcpy(array_buffer.Data(), ptr, s);
 
     return array_buffer;
 }
